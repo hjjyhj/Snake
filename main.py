@@ -31,7 +31,18 @@ class FRUIT:
         fruit_rect = pygame.Rect(int(self.pos.x * cell_size), int(self.pos.y * cell_size), cell_size, cell_size)
         # draw the rectangle
         pygame.draw.rect(screen, (126, 166, 114), fruit_rect) #surface, color, rect
+
+class MAIN:
+    def __init__(self):
+        self.snake = SNAKE()
+        self.fruit = FRUIT()
         
+    def update(self):
+        self.snake.move_snake()
+        
+    def draw_elements(self):
+        self.fruit.draw_fruit()
+        self.snake.draw_snake()
 # Stars the entireity of pygame
 pygame.init()
 cell_size = 40
@@ -39,17 +50,29 @@ cell_number = 20
 screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) # width, height
 clock = pygame.time.Clock()
 
-fruit = FRUIT()
-snake = SNAKE()
+SCREEN_UPDATE = pygame.USEREVENT
+pygame.time.set_timer(SCREEN_UPDATE, 150)
 
+main_game = MAIN()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if event.type == SCREEN_UPDATE:
+            main_game.update()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                main_game.snake.direction = Vector2(0, -1)
+            if event.key == pygame.K_DOWN:
+                main_game.snake.direction = Vector2(0, 1)
+            if event.key == pygame.K_LEFT:
+                main_game.snake.direction = Vector2(-1, 0)
+            if event.key == pygame.K_RIGHT:
+                main_game.snake.direction = Vector2(1, 0)
+            
     screen.fill((175, 215, 70))
-    fruit.draw_fruit()
-    snake.draw_snake()
+    main_game.draw_elements()
     # draw all elements
     pygame.display.update()
     clock.tick(60) # frame rate
